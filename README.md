@@ -112,10 +112,15 @@ forward. In neural-network terminology, a hidden layer creates an intermediate
 representation of the original inputs—signals that the next layer can use to
 make its output (Goodfellow et al., 2016, pp. 165–169).
 
-$$
-h_j = \tanh\left(\sum_{i=1}^{13} w_{ji}x_i + b_j\right),
-\qquad j=1,\ldots,16
-$$
+```text
+hidden value = tanh(
+    sensor 1 × its weight
+  + sensor 2 × its weight
+  + ...
+  + sensor 13 × its weight
+  + bias
+)
+```
 
 In plain terms: multiply each sensor number by its weight, add the results and
 a bias, then apply `tanh` to keep the answer between -1 and +1.
@@ -132,10 +137,15 @@ input-to-action calculation.
 Each output separately combines the same 16 hidden values, using its own
 weights and bias:
 
-$$
-y_k = \tanh\left(\sum_{j=1}^{16} v_{kj}h_j + c_k\right),
-\qquad k \in \{\text{left},\text{right},\text{jump}\}
-$$
+```text
+action score = tanh(
+    hidden value 1 × this action's weight
+  + hidden value 2 × this action's weight
+  + ...
+  + hidden value 16 × this action's weight
+  + bias
+)
+```
 
 The result is three scores between -1 and +1: one for left, one for right, and
 one for jump. They are **not** probabilities, and the network does not contain
@@ -190,9 +200,9 @@ first brains are therefore starting guesses. There are 275 such values:
 
 The brain suggests scores; the simulation applies them:
 
-$$
-\text{steering} = \text{right score} - \text{left score}
-$$
+```text
+steering = right score - left score
+```
 
 - Positive steering accelerates right; negative steering accelerates left.
   The game adds `steering × 0.38` to horizontal velocity each physics step,
@@ -224,15 +234,11 @@ so the same brain may give different scores next time.
 While an agent is active, its score is recalculated from how far it is from
 the goal:
 
-$$
-\text{fitness}
-=
-\text{starting distance}
--
-\text{current distance}
--
-0.1 \times \text{elapsed seconds}
-$$
+```text
+fitness = starting distance
+        - current distance
+        - (0.1 × elapsed seconds)
+```
 
 Getting closer generally raises the score; taking longer slightly lowers it.
 Reaching the goal adds a 1000-point bonus.
